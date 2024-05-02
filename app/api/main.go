@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"reflect"
 
 	_ "github.com/lib/pq"
 )
@@ -95,6 +97,7 @@ func main() {
 		fmt.Printf("id is %d name is %s and age is %d and email is %s\n", id, name, age, email)
 	}
 	http.HandleFunc("/api", retrieveData)
+	http.HandleFunc("/api/create", CreateUser)
 	fmt.Println("Server is running on port 8080")
 	http.ListenAndServe(":8080", nil)
 
@@ -104,4 +107,38 @@ func CheckError(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func CreateUser(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	parsedData, err := json.Marshal(body)
+	if err != nil {
+		panic(err)
+
+	}
+
+	response := map[string]interface{}{
+		"success": true,
+		"data":    parsedData,
+	}
+
+	jsonResponse, er := json.Marshaler(response)
+	if er != nil {
+		panic(er)
+	}
+
+	if r.Method == "POST" {
+		fmt.Println("data in body is", string(body))
+
+	} else {
+		panic(`Route not Found`)
+	}
+
+	fmt.Printf("parseed data in body and type is", string(body), reflect.TypeOf(body))
+
+	w.Write(jsonResponse)
+
 }
