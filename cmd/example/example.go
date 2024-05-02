@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func exampleFunc() int {
+func ExampleFunc() int {
 	str1 := "10"
 	num, err := strconv.Atoi((str1))
 
