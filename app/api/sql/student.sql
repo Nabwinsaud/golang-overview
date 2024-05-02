@@ -2,3 +2,7 @@
 CREATE TABLE students (
     id int not null PRIMARY KEY, name VARCHAR(200), age int, email VARCHAR(100)
 )
+
+ALTER TABLE students DROP COLUMN id
+
+ALTER TABLE students ADD COLUMN id serial PRIMARY KEY
