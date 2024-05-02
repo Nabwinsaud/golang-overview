@@ -29,5 +29,21 @@ func fileSystem() []string {
 	for i := 0; i < len(args); i++ {
 		fmt.Println("arg is", args[i])
 	}
+
+	i := 0
+
+	for {
+		fmt.Println("iteration is ", i)
+		if i == 100 {
+			break
+		}
+		i++
+	}
+
+	entry := []string{"Nabin", "khem", "Ram", "Hari", "Shyam"}
+
+	for i, name := range entry {
+		fmt.Printf("index sis %d and name is %s\n", i, name)
+	}
 	return args
 }
