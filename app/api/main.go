@@ -2,7 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"net/http"
 
 	_ "github.com/lib/pq"
 )
@@ -16,6 +18,32 @@ const (
 )
 
 var db *sql.DB
+
+func retrieveData(w http.ResponseWriter, r *http.Request) {
+	data := []string{"nabin", "hari", "sita"}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(http.StatusOK)
+
+	// for _, record := range data {
+	// 	fmt.Fprint(w, record)
+
+	// }\
+
+	response := map[string]interface{}{
+		"success": true,
+		"message": "data retrieved successfully",
+		"data":    data,
+	}
+
+	jsonRespnse, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println("error marshalling json", err)
+	}
+
+	w.Write(jsonRespnse)
+}
 
 func main() {
 
@@ -66,6 +94,9 @@ func main() {
 
 		fmt.Printf("id is %d name is %s and age is %d and email is %s\n", id, name, age, email)
 	}
+	http.HandleFunc("/api", retrieveData)
+	fmt.Println("Server is running on port 8080")
+	http.ListenAndServe(":8080", nil)
 
 }
 
