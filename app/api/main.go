@@ -49,6 +49,13 @@ func retrieveData(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonRespnse)
 }
 
+type Student struct {
+	Name  string `json:name`
+	Age   int    `json:age`
+	Email string `json:email`
+	Id    int    `json:id`
+}
+
 func main() {
 
 	connectionString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
@@ -73,7 +80,7 @@ func main() {
 	// dynamic and secure way to insert data
 	// insertDataSecureWay := `INSERT INTO students(name,age,email) VALUES($1,$2,$3)`
 
-	// _, e := db.Exec(insertDataSecureWay, "Hari", 22, "hari@gmail.com")
+	// _, e := db.Exec(insertDataSecureWay, "Shayam", 21, "shyam@gmail.com")
 
 	// CheckError(e)
 
@@ -102,6 +109,7 @@ func main() {
 	readTemplateEngine()
 	http.HandleFunc("/api", retrieveData)
 	http.HandleFunc("/api/create", CreateUser)
+	http.HandleFunc("/api/update", updateUser)
 	fmt.Println("Server is running on port 8080")
 	http.ListenAndServe(":8080", nil)
 
@@ -144,6 +152,36 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("parseed data in body and type is", string(body), reflect.TypeOf(body), response)
 
 	// w.Write(jsonResponse)
+
+}
+
+func updateUser(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+
+	}
+	defer r.Body.Close()
+	fmt.Println("body is", string(body))
+
+	var formattedData Student
+	err = json.Unmarshal(body, &formattedData)
+	if err != nil {
+		http.Error(w, "failed to parse the data", http.StatusBadRequest)
+	}
+
+	fmt.Println("formatted data is ", formattedData, reflect.TypeOf(formattedData))
+	if r.Method == "PUT" {
+		// updateData, err := db.Exec(`UPDATE students SET name=$1,age=$2 WHERE id=$3`, "Nabin", 21, 1)
+		updateData, err := db.Exec(`UPDATE students SET name=$1,age=$2 WHERE id=$3`, formattedData.Name, formattedData.Age, formattedData.Id)
+
+		if err != nil {
+			fmt.Println("Failed to execute the query", err)
+			http.Error(w, "Failed to execute the query", http.StatusBadRequest)
+		}
+		fmt.Println("data updated successfully", updateData)
+		w.WriteHeader(http.StatusOK)
+	}
 
 }
 
