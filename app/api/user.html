@@ -6,11 +6,20 @@
     <title>The basic go template engine</title>
   </head>
   <body>
-    Name : {{.Name }}
-    <br />
-    Age : {{.Age}}
+    <h1>User Profile</h1>
+    <p><strong>Users:</strong> {{ . | len }}</p>
+    <ul>
+      {{range .}}
+      <li>
+        Name : {{.Name }}
+        <br />
+        Age : {{.Age}}
 
-    <br />
-    Email : {{.Email}}
+        <br />
+        Email : {{.Email}}
+      </li>
+
+      {{end}}
+    </ul>
   </body>
 </html>

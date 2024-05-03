@@ -159,7 +159,7 @@ func readTemplateEngine() {
 	if err != nil {
 		panic(err)
 	}
-	data := User{Name: "Nabin", Age: 21, Email: "nabin@gmail.com"}
+	data := []User{{Name: "Nabin", Age: 21, Email: "nabin@gmail.com"}, {Name: "Hari", Age: 22, Email: "har@gmail.com"}}
 	var tmplBuffer bytes.Buffer
 	templErr := templ.Execute(&tmplBuffer, data)
 
@@ -167,4 +167,5 @@ func readTemplateEngine() {
 		panic(templErr)
 	}
 	fmt.Println(tmplBuffer.String(), "the template is parsed successfully")
+
 }
