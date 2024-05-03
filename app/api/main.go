@@ -155,6 +155,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// !issues in the updateUser while updating the data
 func updateUser(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
