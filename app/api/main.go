@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io"
 	"net/http"
 	"reflect"
@@ -96,6 +98,8 @@ func main() {
 
 		fmt.Printf("id is %d name is %s and age is %d and email is %s\n", id, name, age, email)
 	}
+
+	readTemplateEngine()
 	http.HandleFunc("/api", retrieveData)
 	http.HandleFunc("/api/create", CreateUser)
 	fmt.Println("Server is running on port 8080")
@@ -125,10 +129,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		"data":    parsedData,
 	}
 
-	jsonResponse, er := json.Marshaler(response)
-	if er != nil {
-		panic(er)
-	}
+	// jsonResponse, er := json.Marshaler(response)
+	// if er != nil {
+	// 	panic(er)
+	// }
 
 	if r.Method == "POST" {
 		fmt.Println("data in body is", string(body))
@@ -137,8 +141,30 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		panic(`Route not Found`)
 	}
 
-	fmt.Printf("parseed data in body and type is", string(body), reflect.TypeOf(body))
+	fmt.Printf("parseed data in body and type is", string(body), reflect.TypeOf(body), response)
 
-	w.Write(jsonResponse)
+	// w.Write(jsonResponse)
 
+}
+
+type User struct {
+	Name  string
+	Age   int
+	Email string
+}
+
+func readTemplateEngine() {
+	templ, err := template.ParseFiles("user.html")
+
+	if err != nil {
+		panic(err)
+	}
+	data := User{Name: "Nabin", Age: 21, Email: "nabin@gmail.com"}
+	var tmplBuffer bytes.Buffer
+	templErr := templ.Execute(&tmplBuffer, data)
+
+	if templErr != nil {
+		panic(templErr)
+	}
+	fmt.Println(tmplBuffer.String(), "the template is parsed successfully")
 }
